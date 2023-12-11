@@ -71,9 +71,8 @@ class MyPlugin {
       console.log("UPDATED BETTERSTACKONDISCORD");
       const data = await response.json();
 
-      divs.forEach(div => {
-        div.innerHTML = '';
-      });
+      // Clear the content inside additionalDom
+      additionalDom.innerHTML = '';
       divs = [];
 
       if (data && data.data) {
