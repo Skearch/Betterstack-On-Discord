@@ -1,6 +1,7 @@
 /**
  * @name BetterstackOnDiscord
  * @author Skearch
+ * @authorId 252767157585313802
  * @description Betterstack.com status on discord.
  * @version 1.0.0
  */
@@ -40,8 +41,6 @@ class MyPlugin {
   }
 
   startUpdates() {
-    this.destroyDoms();
-
     const root = xpathResult.singleNodeValue;
 
     if (root) {
@@ -71,7 +70,7 @@ class MyPlugin {
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
-
+      this.destroyDoms();
       const data = await response.json();
 
       if (data && data.data) {
