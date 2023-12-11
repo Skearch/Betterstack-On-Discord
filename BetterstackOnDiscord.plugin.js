@@ -71,11 +71,12 @@ class MyPlugin {
       console.log("UPDATED BETTERSTACKONDISCORD");
       const data = await response.json();
 
-      if (data && data.data) {
-        divs.forEach(div => {
-          div.innerHTML = '';
-        });
+      divs.forEach(div => {
+        div.innerHTML = '';
+      });
+      divs = [];
 
+      if (data && data.data) {
         data.data.forEach(statusPage => {
           const subdomain = statusPage.attributes.subdomain.toUpperCase();
           const aggregateState = statusPage.attributes.aggregate_state;
