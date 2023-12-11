@@ -3,14 +3,11 @@
  * @author Skearch
  * @authorId 252767157585313802
  * @description Betterstack.com status on discord.
- * @version 1.0.2
+ * @version 1.0.3
  */
 
-//replit url
-const apiUrl = "";
-
-//refresh update
-const cooldown = 60000;
+const apiUrl = ""; //replit url
+const cooldown = 170000; //refresh update
 
 let additionalDom = document.createElement("div");
 const xpathResult = document.evaluate(
@@ -71,7 +68,6 @@ class MyPlugin {
       console.log("UPDATED BETTERSTACKONDISCORD");
       const data = await response.json();
 
-      // Clear the content inside additionalDom
       additionalDom.innerHTML = '';
       divs = [];
 
@@ -87,10 +83,16 @@ class MyPlugin {
           newDiv.style.color = "white";
           newDiv.style.display = "flex";
           newDiv.style.alignItems = "center";
-          newDiv.style.marginTop = "7px";
-          newDiv.style.marginBottom = "7px";
+          newDiv.style.marginTop = "5px";
+          newDiv.style.marginBottom = "5px";
 
-          const circleColor = aggregateState === "operational" ? "lightgreen" : "lightcoral";
+          let borderStyle = "border: 2px solid ";
+
+          if (aggregateState === "operational") {
+            borderStyle += "lightgreen";
+          } else {
+            borderStyle += "lightcoral";
+          }
 
           if (logoUrl) {
             const logoImg = document.createElement("img");
@@ -101,10 +103,13 @@ class MyPlugin {
             logoImg.style.height = "20px";
             logoImg.style.borderRadius = "40%";
             logoImg.style.verticalAlign = "middle";
+            logoImg.style.cssText += borderStyle;
             newDiv.appendChild(logoImg);
           }
 
-          newDiv.innerHTML += ` ${subdomain} <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4" fill="${circleColor}" aria-hidden="true" class="pointerEvents__33f6a"></circle></svg>`;
+          newDiv.innerHTML += ` ${subdomain}`;
+
+          newDiv.setAttribute("title", `${aggregateState.toUpperCase()}`);
 
           additionalDom.appendChild(newDiv);
           divs.push(newDiv);
