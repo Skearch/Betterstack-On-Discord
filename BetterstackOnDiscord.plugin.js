@@ -3,7 +3,7 @@
  * @author Skearch
  * @authorId 252767157585313802
  * @description Betterstack.com status on discord.
- * @version 1.0.0
+ * @version 1.0.1
  */
 
 //replit url
@@ -14,20 +14,40 @@ const cooldown = 60000;
 
 let additionalDom = document.createElement("div");
 const xpathResult = document.evaluate(
-  "/html/body/div[1]/div[3]/div[1]/div[1]/div/div[2]/div/div/div/div/div/section",
+  '//*[@id="app-mount"]/div[3]/div[1]/div[1]/div/div[2]/div/div/div/div/div[1]/section',
   document,
   null,
   XPathResult.FIRST_ORDERED_NODE_TYPE,
   null
 );
+let divs = [];
 
 class MyPlugin {
-  constructor(meta) {}
+  constructor(meta) { }
 
   start() {
-    this.startUpdates();
-    this.intervalId = setInterval(() => this.startUpdates(), cooldown);
+    const root = xpathResult.singleNodeValue;
+    if (root) {
+      additionalDom = document.createElement("div");
+      additionalDom.className = "panel_bd8c76 activityPanel__22355";
+      additionalDom.innerHTML = `
+				<div class="body__709f6">
+					<div class="gameWrapper__5b041 clickableGameWrapper_a7dbaa">
+						<div class="info_c28002">
+						</div>
+					</div>
+				</div>
+			`;
+
+      root.insertBefore(additionalDom, root.firstChild);
+    } else {
+      BdApi.UI.showToast("Element not found using XPath.");
+    }
+
+    this.getUpdates();
+    this.intervalId = setInterval(() => this.getUpdates(), cooldown);
   }
+
 
   stop() {
     clearInterval(this.intervalId);
@@ -40,29 +60,6 @@ class MyPlugin {
     }
   }
 
-  startUpdates() {
-    const root = xpathResult.singleNodeValue;
-
-    if (root) {
-      additionalDom = document.createElement("div");
-      additionalDom.className = "panel_bd8c76 activityPanel__22355";
-      additionalDom.innerHTML = `
-                <div class="body__709f6">
-                    <div class="gameWrapper__5b041 clickableGameWrapper_a7dbaa">
-                        <div class="info_c28002">
-                        </div>
-                    </div>
-                </div>
-            `;
-
-      root.insertBefore(additionalDom, root.firstChild);
-    } else {
-      BdApi.UI.showToast("Element not found using XPath.");
-    }
-
-    this.getUpdates();
-  }
-
   async getUpdates() {
     try {
       const response = await fetch(apiUrl, { method: "GET" });
@@ -70,10 +67,15 @@ class MyPlugin {
       if (!response.ok) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
-      this.destroyDoms();
+
+      console.log("UPDATED BETTERSTACKONDISCORD");
       const data = await response.json();
 
       if (data && data.data) {
+        divs.forEach(div => {
+          div.innerHTML = '';
+        });
+
         data.data.forEach(statusPage => {
           const subdomain = statusPage.attributes.subdomain;
           const aggregateState = statusPage.attributes.aggregate_state;
@@ -84,7 +86,7 @@ class MyPlugin {
           newDiv.setAttribute("data-text-variant", "text-sm/normal");
           newDiv.style.color = "white";
           newDiv.style.display = "flex";
-          newDiv.style.alignItems = "center"; 
+          newDiv.style.alignItems = "center";
 
           const circleColor = aggregateState === "operational" ? "lightgreen" : "lightcoral";
 
@@ -103,6 +105,7 @@ class MyPlugin {
           newDiv.innerHTML += ` ${subdomain} [<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4" fill="${circleColor}" aria-hidden="true" class="pointerEvents__33f6a"></circle></svg>]`;
 
           additionalDom.appendChild(newDiv);
+          divs.push(newDiv);
         });
       } else {
         BdApi.UI.showToast("Invalid or missing data in the JSON response.");
