@@ -3,7 +3,7 @@
  * @author Skearch
  * @authorId 252767157585313802
  * @description Betterstack.com status on discord.
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 //replit url
@@ -77,7 +77,7 @@ class MyPlugin {
         });
 
         data.data.forEach(statusPage => {
-          const subdomain = statusPage.attributes.subdomain;
+          const subdomain = statusPage.attributes.subdomain.toUpperCase();
           const aggregateState = statusPage.attributes.aggregate_state;
           const logoUrl = statusPage.attributes.logo_url;
 
@@ -87,6 +87,8 @@ class MyPlugin {
           newDiv.style.color = "white";
           newDiv.style.display = "flex";
           newDiv.style.alignItems = "center";
+          newDiv.style.marginTop = "7px";
+          newDiv.style.marginBottom = "7px";
 
           const circleColor = aggregateState === "operational" ? "lightgreen" : "lightcoral";
 
@@ -102,7 +104,7 @@ class MyPlugin {
             newDiv.appendChild(logoImg);
           }
 
-          newDiv.innerHTML += ` ${subdomain} [<svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4" fill="${circleColor}" aria-hidden="true" class="pointerEvents__33f6a"></circle></svg>]`;
+          newDiv.innerHTML += ` ${subdomain} <svg width="10" height="10" xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4" fill="${circleColor}" aria-hidden="true" class="pointerEvents__33f6a"></circle></svg>`;
 
           additionalDom.appendChild(newDiv);
           divs.push(newDiv);
